@@ -4,12 +4,11 @@ const localMac = getLocalMac();
 function getLocalMac() {
     let nics = require("os").networkInterfaces()
     let mac = ""
-    if (nics.eth0) {
+    if (process.platform == "linux") {
         mac = nics.eth0[0].mac;
-    } else {
-        if (nics.Ethernet) {
-            mac = nics.Ethernet[0].mac;
-        }
+    }
+    if (process.platform == "win32") {
+        mac = nics.Ethernet[0].mac;
     }
     return mac.toUpperCase();
 }
@@ -42,7 +41,7 @@ class RESTAPI {
                     "content": "Authorisation Failure"
                 });
             } else {
-                let scan = new this.nmap.QuickScan("192.168.0.2-60");
+                let scan = new this.nmap.QuickScan("192.168.0.1-255");
                 scan.on("complete", (data) => {
                     let devices = []
                     data.forEach(device => {
